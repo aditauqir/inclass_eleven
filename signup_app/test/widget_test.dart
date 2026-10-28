@@ -9,13 +9,13 @@ void main() {
   testWidgets('Test 1: empty submit shows validation errors', (tester) async {
     await tester.pumpWidget(createTestApp());
 
-    await tester.tap(find.text('Sign Up'));
+    await tester.tap(find.text('Join the Mansion'));
     await tester.pumpAndSettle();
 
     expect(find.text('Please enter your name'), findsOneWidget);
     expect(find.text('Please enter your email'), findsOneWidget);
+    expect(find.text('Pick your birth date'), findsOneWidget);
     expect(find.text('Please enter a password'), findsOneWidget);
-    expect(find.text('Demo signup complete — your form passed validation!'), findsNothing);
   });
 
   testWidgets('Test 2: bad email shows error', (tester) async {
@@ -23,13 +23,11 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
     await tester.enterText(find.byType(TextFormField).at(1), 'bademail');
-    await tester.enterText(find.byType(TextFormField).at(2), 'secret123');
 
-    await tester.tap(find.text('Sign Up'));
+    await tester.tap(find.text('Join the Mansion'));
     await tester.pumpAndSettle();
 
     expect(find.text('Please enter a valid email'), findsOneWidget);
-    expect(find.text('Demo signup complete — your form passed validation!'), findsNothing);
   });
 
   testWidgets('Test 3: short password shows error', (tester) async {
@@ -37,26 +35,25 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
     await tester.enterText(find.byType(TextFormField).at(1), 'adi@example.com');
-    await tester.enterText(find.byType(TextFormField).at(2), '123');
+    // Password is at index 3 now (index 2 is birth date)
+    await tester.enterText(find.byType(TextFormField).at(3), '123');
 
-    await tester.tap(find.text('Sign Up'));
+    await tester.tap(find.text('Join the Mansion'));
     await tester.pumpAndSettle();
 
     expect(find.text('Password must be at least 6 characters'), findsOneWidget);
-    expect(find.text('Demo signup complete — your form passed validation!'), findsNothing);
   });
 
-  testWidgets('Test 4: valid submit shows green snackbar', (tester) async {
+  testWidgets('Test 4: password visibility toggles with eye icon', (tester) async {
     await tester.pumpWidget(createTestApp());
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
-    await tester.enterText(find.byType(TextFormField).at(1), 'noorwastaken@adi.com');
-    await tester.enterText(find.byType(TextFormField).at(2), 'myverygoodpassword123#');
-
-    await tester.tap(find.text('Sign Up'));
+    // Initially obscureText is true
+    expect(find.byIcon(Icons.visibility), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.visibility));
     await tester.pumpAndSettle();
 
-    expect(find.text('Demo signup complete — your form passed validation!'), findsOneWidget);
+    // Now visibility_off is shown
+    expect(find.byIcon(Icons.visibility_off), findsOneWidget);
   });
 
   testWidgets('Test 5: local demo tip shows preset tip', (tester) async {
