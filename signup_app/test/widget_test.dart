@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:signup_app/main.dart';
+import 'package:signup_app/screens/signup_screen.dart';
+
+Widget createTestApp() => const MaterialApp(home: SignupScreen());
 
 void main() {
   testWidgets('Test 1: empty submit shows validation errors', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     await tester.tap(find.text('Sign Up'));
     await tester.pumpAndSettle();
@@ -17,7 +19,7 @@ void main() {
   });
 
   testWidgets('Test 2: bad email shows error', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
     await tester.enterText(find.byType(TextFormField).at(1), 'bademail');
@@ -31,7 +33,7 @@ void main() {
   });
 
   testWidgets('Test 3: short password shows error', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
     await tester.enterText(find.byType(TextFormField).at(1), 'adi@example.com');
@@ -45,7 +47,7 @@ void main() {
   });
 
   testWidgets('Test 4: valid submit shows green snackbar', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Adi Tauqir');
     await tester.enterText(find.byType(TextFormField).at(1), 'noorwastaken@adi.com');
@@ -58,7 +60,7 @@ void main() {
   });
 
   testWidgets('Test 5: local demo tip shows preset tip', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     expect(find.text('Get a signup tip'), findsOneWidget);
     await tester.tap(find.text('Get a signup tip'));
@@ -72,7 +74,7 @@ void main() {
   });
 
   testWidgets('Test 6: local error and retry flow', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(createTestApp());
 
     // Long press triggers the forced error state
     await tester.longPress(find.text('Get a signup tip'));
