@@ -8,7 +8,8 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  static const Color brandColor = Color(0xFF4AB6A6);
+  // I changed this this color to D1B1C8 so it matches the theme
+  static const Color brandColor = Color(0xFFD1B1C8);
 
   // The Global Key - acts like a remote control for the form
   final _formKey = GlobalKey<FormState>();

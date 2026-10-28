@@ -15,7 +15,8 @@ class HauntedMansionApp extends StatelessWidget {
       title: 'The Haunted Signup Mansion',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // I changed this this color to D1B1C8 for the seed color cause it matches the theme better
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD1B1C8)),
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),
