@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'success_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -18,6 +19,16 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // 🎂 Potion B: Birth-date picker fields
+  DateTime? _birthDate;
+  final TextEditingController _dateController = TextEditingController();
+
+  // 🎛️ Potion A: Password visibility toggle
+  bool _obscurePassword = true;
+
+  // ⏳ Potion C: Loading state before navigation
+  bool _submitting = false;
 
   // Task A: Fixed local preset demo tips (no network/HTTP used)
   final List<String> _demoTips = [
@@ -41,7 +52,24 @@ class _SignupScreenState extends State<SignupScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _dateController.dispose();
     super.dispose();
+  }
+
+  // ⏳ Potion C: Submit with 2s loading state and pushReplacement
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _submitting = true); // potion starts brewing
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return; // user may have left the screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SuccessScreen(
+          userName: _nameController.text.trim(),
+        ),
+      ),
+    );
   }
 
   // Task A: Local tip simulation
@@ -76,9 +104,9 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Join Us Today for the Cash Money!'),
+        title: const Text('Haunted Signup Laboratory'),
         backgroundColor: brandColor,
-        foregroundColor: Colors.white,
+        foregroundColor: const Color(0xFF14101F),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -138,16 +166,61 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Password Field
+              // 🎂 Potion B — Birth-date picker
               TextFormField(
-                controller: _passwordController,
-                obscureText: true,
+                controller: _dateController,
+                readOnly: true, // taps open the picker, not the keyboard
                 decoration: const InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock, color: brandColor),
+                  labelText: 'Birth Date',
+                  prefixIcon: Icon(Icons.cake, color: brandColor),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: brandColor, width: 2),
+                  ),
+                ),
+                validator: (_) =>
+                    _birthDate == null ? 'Pick your birth date' : null,
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime(2008),
+                    firstDate: DateTime(1920),
+                    lastDate: DateTime.now(), // no future birthdays!
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _birthDate = picked;
+                      _dateController.text =
+                          '${picked.month}/${picked.day}/${picked.year}';
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // 🧪 Potion A — Password Field with visibility toggle
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock, color: brandColor),
+                  border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: brandColor, width: 2),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: brandColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                   ),
                 ),
                 validator: (value) {
@@ -168,21 +241,25 @@ class _SignupScreenState extends State<SignupScreen> {
                 child: TextButton.icon(
                   onPressed: _isLoadingTip ? null : () => _fetchLocalTip(),
                   onLongPress: () => _fetchLocalTip(forceError: true),
-                  icon: const Icon(Icons.lightbulb_outline, size: 18, color: brandColor),
+                  icon: const Icon(Icons.lightbulb_outline,
+                      size: 18, color: brandColor),
                   label: const Text(
                     'Get a signup tip',
-                    style: TextStyle(color: brandColor, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        color: brandColor, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
               if (_isLoadingTip)
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                   child: Text('Loading demo tip...'),
                 ),
               if (_displayedTip != null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                   child: Text(
                     'Tip: $_displayedTip',
                     style: const TextStyle(
@@ -200,7 +277,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       Expanded(
                         child: Text(
                           _tipError!,
-                          style: const TextStyle(color: Colors.red, fontSize: 13),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 13),
                         ),
                       ),
                       TextButton(
@@ -213,27 +291,29 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 24),
 
-              // Sign Up Button
+              // ⏳ Potion C — Join the Mansion Button with loading state
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Demo signup complete — your form passed validation!'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  }
-                },
+                onPressed: _submitting ? null : _submit, // null = disabled
                 style: ElevatedButton.styleFrom(
                   backgroundColor: brandColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                  foregroundColor: const Color(0xFF14101F),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 14),
                 ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                child: _submitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF14101F),
+                        ),
+                      )
+                    : const Text(
+                        'Join the Mansion',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),
