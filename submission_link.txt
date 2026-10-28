@@ -1,0 +1,9 @@
+In-Class Activity 11: The Haunted Signup Mansion
+Student: Adi Tauqir
+Track: Undergraduate Track
+
+GitHub Repository URL:
+https://github.com/aditauqir/inclass_eleven
+
+Release APK Deliverable:
+inclass-eleven-aditauqir.apk
