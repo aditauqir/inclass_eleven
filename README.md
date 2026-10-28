@@ -1,4 +1,1 @@
-# inclass_eleven
-
-Adi Tauqir
-undergraduate track
+Adi Tauqir - Undergraduate Track - MAD 4360

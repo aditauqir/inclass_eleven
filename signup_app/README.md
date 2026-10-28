@@ -1,5 +1,1 @@
-# In-Class Activity 11: The Haunted Signup Mansion
-
-Student: Adi Tauqir
-Track: Undergraduate Track
-APK Deliverable: inclass-eleven-aditauqir.apk
+Adi Tauqir - Undergraduate Track - MAD 4360

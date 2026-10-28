@@ -183,7 +183,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime(2008),
+                    initialDate: DateTime(2005, 12, 15),
                     firstDate: DateTime(1920),
                     lastDate: DateTime.now(), // no future birthdays!
                   );
